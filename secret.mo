@@ -17,7 +17,7 @@ actor Secret {
     };
 
     var profiles = HashMap.HashMap<Nat, Profile>(10, func (x, y) { x == y }, Hash.hash);
-    var messages : [Message] = [];
+    var messages = HashMap.HashMap<Nat, [Message]>(10, func (x, y) { x == y }, Hash.hash);
 
     public func createProfile(id: Nat, name: Text, age: Nat) : async () {
         let profile = {id; name; age};
@@ -31,12 +31,19 @@ actor Secret {
     public func sendMessage(sender: Nat, receiver: Nat, content: Text) : async () {
         let timestamp = messages.size();
         let message = {sender; receiver; content; timestamp};
-        messages := Array.append<Secret.Message>(messages, [message]);
+        let key = if (sender < receiver) sender * 1000000 + receiver else receiver * 1000000 + sender;
+        let currentMessages = switch (messages.get(key)) {
+            case null { [] };
+            case (?m) { m };
+        };
+        messages.put(key, Array.append<Secret.Message>(currentMessages, [message]));
     };
 
     public query func getMessages(user1: Nat, user2: Nat) : async [Message] {
-        return Array.filter<Message>(messages, func (msg: Message) : Bool {
-            return (msg.sender == user1 and msg.receiver == user2) or (msg.sender == user2 and msg.receiver == user1);
-        });
+        let key = if (user1 < user2) user1 * 1000000 + user2 else user2 * 1000000 + user1;
+        return switch (messages.get(key)) {
+            case null { [] };
+            case (?m) { m };
+        };
     };
 }
