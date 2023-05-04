@@ -1,12 +1,14 @@
 import HashMap "mo:base/HashMap";
 import Hash "mo:base/Hash";
 import Array "mo:base/Array";
+import Principal "mo:base/Principal";
 
 actor Secret {
     public type Profile = {
-        id: Nat;
-        name: Text;
-        age: Nat;
+        nickname: Text;
+        color: Text;
+        picture: Text;
+        principal: Principal;
     };
 
     public type Message = {
@@ -16,15 +18,16 @@ actor Secret {
         timestamp: Nat;
     };
 
-    var profiles = HashMap.HashMap<Nat, Profile>(10, func (x, y) { x == y }, Hash.hash);
+    var profiles = HashMap.HashMap<Principal, Profile>(10, func (x, y) { x == y }, Principal.hash);
     var messages = HashMap.HashMap<Nat, [Message]>(10, func (x, y) { x == y }, Hash.hash);
 
-    public func createProfile(id: Nat, name: Text, age: Nat) : async () {
-        let profile = {id; name; age};
-        profiles.put(id, profile);
+    public shared(msg) func createProfile(nickname: Text, color: Text, picture: Text) : async () {
+        let principal = msg.caller;
+        let profile = {nickname; color; picture; principal};
+        profiles.put(principal, profile);
     };
 
-    public query func getProfile(id: Nat) : async ?Profile {
+    public query func getProfile(id: Principal) : async ?Profile {
         return profiles.get(id);
     };
 
