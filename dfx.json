@@ -1,0 +1,34 @@
+{
+  "canisters": {
+    "secret_backend": {
+      "main": "src/secret_backend/main.mo",
+      "type": "motoko"
+    },
+    "secret_frontend": {
+      "dependencies": [
+        "secret_backend"
+      ],
+      "frontend": {
+        "entrypoint": "src/secret_frontend/src/index.html"
+      },
+      "source": [
+        "src/secret_frontend/assets",
+        "dist/secret_frontend/"
+      ],
+      "type": "assets"
+    }
+  },
+  "defaults": {
+    "build": {
+      "args": "",
+      "packtool": ""
+    }
+  },
+  "networks": {
+    "local": {
+      "bind": "127.0.0.1:8000",
+      "type": "ephemeral"
+    }
+  },
+  "version": 1
+}

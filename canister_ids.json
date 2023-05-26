@@ -1,0 +1,8 @@
+{
+  "secret_backend": {
+    "ic": "7myim-zqaaa-aaaap-qbhlq-cai"
+  },
+  "secret_frontend": {
+    "ic": "7lzoy-uiaaa-aaaap-qbhla-cai"
+  }
+}
